@@ -1,59 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canadian Time Zones</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+<!doctype html>
+<html lang="en-CA">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Compare Canadian capital-city times with Ottawa. Plan meetings and understand the November 2026 clock change. English / Français."><title>Canada, at the same time</title><link rel="stylesheet" href="style.css"><script defer src="time.js"></script><script defer src="script.js"></script></head>
 <body>
-  <main class="container">
-    <header class="header">
-      <div class="header-content">
-        <h1 class="title" data-i18n="title">Canadian Time Zones</h1>
-        <p class="subtitle" data-i18n="subtitle">Understanding time across Canada</p>
-      </div>
-      <button class="lang-toggle" id="langToggle" aria-label="Toggle language">
-        <span data-i18n="langSwitch">FR</span>
-      </button>
-    </header>
-
-    <section class="time-selector">
-      <div class="current-time">
-        <div class="location-label" data-i18n="viewingFrom">Viewing from Ottawa</div>
-        <div class="time-display" id="ottawaTime">2:30 PM</div>
-        <div class="date-display" id="ottawaDate">Thursday, October 22, 2026</div>
-      </div>
-      <div class="time-controls">
-        <button class="control-btn" id="nowBtn" data-i18n="now">Now</button>
-        <input type="date" id="dateInput" class="control-input">
-        <input type="time" id="timeInput" class="control-input">
-      </div>
-    </section>
-
-    <section class="timeline-section">
-      <div class="timeline-header" data-i18n="timelineHeader">At the same moment across Canada:</div>
-      <div class="timeline" id="timeline">
-        <!-- Timeline will be generated here -->
-      </div>
-    </section>
-
-    <footer class="info-panel">
-      <div class="info-grid">
-        <div class="info-block">
-          <h3 data-i18n="dstTitle">Daylight Saving 2027</h3>
-          <p data-i18n="dstDates">Mar 14 – Nov 7</p>
-          <p class="info-detail" data-i18n="dstWho">ON, QC, NS, NB, PE, NL, NU, NT, AB</p>
-        </div>
-        <div class="info-block">
-          <h3 data-i18n="permanentTitle">Permanent Time</h3>
-          <p data-i18n="permanentWho">BC, MB, YT, SK</p>
-          <p class="info-detail" data-i18n="permanentNote">No clock changes</p>
-        </div>
-      </div>
-    </footer>
-  </main>
-
-  <script src="script.js"></script>
-</body>
-</html>
+<div class="notice" id="notice"></div>
+<main>
+<header><div><p class="eyebrow" id="eyebrow"></p><h1 id="title"></h1><p id="subtitle" class="muted"></p></div><button id="language" lang="fr-CA">Français</button></header>
+<section class="planner" aria-labelledby="plannerTitle">
+<div class="anchor"><p class="eyebrow" id="plannerTitle"></p><h2>Ottawa</h2><output id="anchorTime"></output><p id="anchorDate"></p><span id="anchorZone" class="tag"></span><p id="mode" class="muted"></p><button id="now"></button></div>
+<div class="controls"><div class="calendar"><div class="month-nav"><button id="prevMonth">←</button><h3 id="month"></h3><button id="nextMonth">→</button></div><div id="weekdays" class="calendar-grid"></div><div id="days" class="calendar-grid"></div></div>
+<div class="time-controls"><div class="control-heading"><label for="slider" id="sliderLabel"></label><button id="format"></button></div><input id="slider" type="range" min="0" max="1439" step="1"><div class="scale"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>23:59</span></div><div class="presets" id="presets"></div><div class="exact"><label for="hour" id="exactLabel"></label><input id="hour" type="number" min="0" max="23"><span>:</span><input id="minute" type="number" min="0" max="59"><span class="muted">24 h</span></div><p id="timeError" role="status"></p><div id="fold" hidden><button id="first"></button><button id="second"></button></div></div></div>
+</section>
+<section class="transition" aria-labelledby="transitionTitle"><div><h2 id="transitionTitle"></h2><p id="transitionText"></p></div><div class="periods"><button id="before"></button><button id="after"></button></div></section>
+<section aria-labelledby="resultsTitle"><div class="results-heading"><div><h2 id="resultsTitle"></h2><p id="resultsHelp" class="muted"></p></div><button id="copy"></button></div><div id="groups"></div><p id="legend" class="muted"></p><p id="copyStatus" role="status"></p></section>
+<section class="comparison"><h2 id="compareTitle"></h2><p id="compareHelp" class="muted"></p><div class="table-scroll"><table><thead id="compareHead"></thead><tbody id="compareBody"></tbody></table></div></section>
+<footer><p id="scope"></p><p id="verified"></p><nav id="sources"></nav><p><a href="https://github.com/IFPTRD/timezones">GitHub</a> · <a href="SOURCES.md" id="method"></a></p></footer>
+</main><noscript>This tool requires JavaScript. / Cet outil nécessite JavaScript.</noscript>
+</body></html>

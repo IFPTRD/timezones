@@ -1,41 +1,33 @@
-# Canadian Time Zones
+# Canada, at the same time / Le Canada, au même moment
 
-A bilingual tool for understanding time differences across Canadian provinces and territories, with attention to jurisdictions that do and don't observe Daylight Saving Time.
+Live: https://ifptrd.github.io/timezones/
 
-## Live Site
-
-**https://ifptrd.github.io/timezones/**
+Bilingual Ottawa-centred meeting planner, inspired by the operator-provided Google Sites reference. Static HTML/CSS/JavaScript, no build step or application dependencies. Optional Google Fonts request; system-font fallback works offline.
 
 ## Features
 
-- **Real-time clock display** for all Canadian capitals and major cities
-- **DST awareness**: clearly marks which jurisdictions change their clocks
-- **Future date checking**: select any date/time to see how times align across zones
-- **Fully bilingual**: toggle between Canadian English and French
-- **Responsive design**: works on desktop, tablet, and mobile
+- Capital cities grouped by actual offset from Ottawa, west to east.
+- Inline month calendar, time slider, exact 24-hour inputs and meeting presets.
+- Before/after November 1, 2026 comparison with a persistent change table.
+- Canadian English/French; 12/24-hour output; previous/next-day labels.
+- Copy meeting times; illustrative weekday office-hour indicators.
+- Explicit, source-documented 2026/2027 rules independent of browser timezone data.
+- Spring gap rejection and explicit autumn repeated-hour selection.
 
-## Recent Legislative Changes
+Ottawa represents Ontario; Toronto and duplicate major cities are omitted. Capital-city rules do not describe every community in a province/territory.
 
-- **British Columbia** (2026): Moved to permanent Pacific daylight time
-- **Manitoba** (September 2026): Moved to permanent Central daylight time
-- **Yukon** (2020): No longer observes DST, stays on UTC-7 year-round
-- **Saskatchewan**: Has never observed DST, stays on UTC-6 year-round
-- All other provinces and territories continue to observe DST
+## Run and test
 
-## 2027 DST Schedule
+Open index.html or serve the directory with any static HTTP server.
 
-- **Spring forward**: March 14, 2027 at 2:00 AM
-- **Fall back**: November 7, 2027 at 2:00 AM
+```
+node time.test.js
+```
 
-**Note:** BC, Manitoba, Yukon, and Saskatchewan no longer change their clocks.
+For browser regression checks, install Playwright and its Chromium dependencies, then run `node browser.test.cjs`.
 
-## Usage
+## Deploy
 
-1. The tool shows current times by default
-2. Use the date/time picker to check future meeting times
-3. Click "Now" / "Maintenant" to reset to current time
-4. Toggle between English and French using the language button
+GitHub Pages publishes the root of `main`. Push reviewed changes, then verify the Pages build and live assets. No secrets, analytics or server-side storage.
 
-## License
-
-MIT
+See [SOURCES.md](SOURCES.md) for government links, verified date, limitations and maintenance instructions. Recheck legislation before expanding the supported planning window beyond December 2027.
