@@ -16,14 +16,18 @@ A bilingual tool for understanding time differences across Canadian provinces an
 
 ## Recent Legislative Changes
 
+- **British Columbia** (2026): Moved to permanent Pacific daylight time
+- **Manitoba** (September 2026): Moved to permanent Central daylight time
 - **Yukon** (2020): No longer observes DST, stays on UTC-7 year-round
 - **Saskatchewan**: Has never observed DST, stays on UTC-6 year-round
 - All other provinces and territories continue to observe DST
 
-## 2025 DST Schedule
+## 2027 DST Schedule
 
-- **Spring forward**: March 9, 2025 at 2:00 AM
-- **Fall back**: November 2, 2025 at 2:00 AM
+- **Spring forward**: March 14, 2027 at 2:00 AM
+- **Fall back**: November 7, 2027 at 2:00 AM
+
+**Note:** BC, Manitoba, Yukon, and Saskatchewan no longer change their clocks.
 
 ## Usage
 

@@ -272,6 +272,11 @@ body {
   color: var(--text-primary);
 }
 
+.info-recent {
+  margin-top: var(--spacing-sm);
+  border-left-color: #6EE7B7;
+}
+
 @media (max-width: 640px) {
   .date-selector {
     grid-template-columns: 1fr;
