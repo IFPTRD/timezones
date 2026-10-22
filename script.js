@@ -6,6 +6,16 @@ const words={
 };
 let lang=new URLSearchParams(location.search).get('lang')==='fr'?'fr':'en', h24=lang==='fr', live=true, occurrence=0;
 let date,minutes,viewYear,viewMonth,instant;
+let theme=matchMedia('(prefers-color-scheme: light)').matches?'day':'night';
+try { theme=localStorage.getItem('timezones-theme')||theme; } catch {}
+const flagCodes=['bc','yt','ab','nt','sk','mb','on','qc','nu','nb','pe','ns','nl'];
+const flagFor=city=>flagCodes[cities.indexOf(city)];
+function updateTheme(){
+ document.documentElement.dataset.theme=theme;
+ $('theme').textContent=lang==='en'?(theme==='day'?'☾ Night mode':'☀ Day mode'):(theme==='day'?'☾ Mode nuit':'☀ Mode jour');
+ $('theme').setAttribute('aria-label',$('theme').textContent);
+}
+$('theme').onclick=()=>{theme=theme==='day'?'night':'day';try{localStorage.setItem('timezones-theme',theme);}catch{}updateTheme();};
 const locale=()=>lang==='fr'?'fr-CA':'en-CA';
 const iso=d=>d.toISOString().slice(0,10);
 function current(){const d=wall(ottawa,Date.now());date=iso(d);minutes=d.getUTCHours()*60+d.getUTCMinutes();if(date<'2026-01-01'||date>'2027-12-31'){date='2027-12-31';live=false;}viewYear=+date.slice(0,4);viewMonth=+date.slice(5,7)-1;const candidates=resolve(date,minutes);occurrence=candidates.length===2 && Date.now()>=candidates[1]?1:0;}
@@ -25,6 +35,7 @@ function comparison(){const t=words[lang];$('compareHead').innerHTML=`<tr><th>${
  $('compareBody').innerHTML=cities.filter(c=>c.policy!=='seasonal').map(c=>`<tr><td>${c.name}</td><td>${difference(c.fixed+240)}</td><td class="changed">${difference(c.fixed+300)}</td><td>${utc(c.fixed)}</td></tr>`).join('');}
 function render(){
  const t=words[lang];document.documentElement.lang=locale();document.title=t.title;
+ updateTheme();$('dateSummary').textContent=lang==='en'?'Change date & time':'Modifier la date et l’heure';
  for(const key of Object.keys(t))if($(key)&&!['prevMonth','nextMonth','hour','minute'].includes(key))$(key).textContent=t[key];
  $('language').textContent=lang==='en'?'Français':'English';$('language').lang=lang==='en'?'fr-CA':'en-CA';
  $('format').textContent=h24?'12 h':'24 h';$('format').setAttribute('aria-label',lang==='en'?'Switch hour format':'Changer le format de l’heure');
@@ -34,6 +45,7 @@ function render(){
  $('before').setAttribute('aria-pressed',String(date==='2026-10-31'));$('after').setAttribute('aria-pressed',String(date==='2026-11-01'));
  calendar();comparison();$('copyStatus').textContent='';
  const candidates=resolve(date,minutes);instant=candidates[occurrence]??candidates[0];
+ if(candidates.length!==1) $('datePanel').open=true;
  $('fold').hidden=candidates.length!==2;$('first').setAttribute('aria-pressed',String(occurrence===0));$('second').setAttribute('aria-pressed',String(occurrence===1));
  $('timeError').textContent=!candidates.length?t.gap:candidates.length===2?t.ambiguous:'';
  $('copy').disabled=!candidates.length;
@@ -45,7 +57,7 @@ function render(){
  const groups=new Map();for(const c of cities){const diff=offset(c,instant)-offset(ottawa,instant);if(!groups.has(diff))groups.set(diff,[]);groups.get(diff).push(c);}
  $('groups').style.setProperty('--columns',groups.size);
  $('groups').innerHTML=[...groups.entries()].sort((a,b)=>a[0]-b[0]).map(([diff,list])=>{const d=wall(list[0],instant),day=iso(d),relation=day<date?t.previous:day>date?t.next:t.today;
- return `<article class="group ${diff===0?'reference':''}"><div class="group-head"><h3>${difference(diff)}</h3><div class="group-time">${time(d)}</div><div class="day-label">${relation} · ${dateText(d,{month:'short',day:'numeric'})}</div></div>${list.map(c=>{const local=wall(c,instant),m=local.getUTCHours()*60+local.getUTCMinutes(),work=local.getUTCDay()>0&&local.getUTCDay()<6&&m>=510&&m<990;return `<div class="city"><strong><span class="work ${work?'on':''}" aria-hidden="true"></span>${c.name}</strong><div class="province">${c[lang]}</div><div class="policy">${c.policy==='seasonal'?t.seasonal:t.fixed}</div></div>`;}).join('')}</article>`;}).join('');
+ return `<article class="group ${diff===0?'reference':''}"><div class="group-head"><h3>${difference(diff)}</h3><div class="group-time">${time(d)}</div><div class="day-label">${relation} · ${dateText(d,{month:'short',day:'numeric'})}</div></div><div class="city-list">${list.map(c=>{const local=wall(c,instant),m=local.getUTCHours()*60+local.getUTCMinutes(),work=local.getUTCDay()>0&&local.getUTCDay()<6&&m>=510&&m<990;return `<div class="city"><strong><img class="flag" src="assets/flags/${flagFor(c)}.svg" alt="" width="24" height="16">${c.name}<span class="work ${work?'on':''}" aria-hidden="true"></span></strong><div class="province">${c[lang]}</div><div class="policy">${c.policy==='seasonal'?t.seasonal:t.fixed}</div></div>`;}).join('')}</div></article>`;}).join('');
  $('slider').setAttribute('aria-valuetext',time(wall(ottawa,instant))+' Ottawa');
 }
 function choose(m){minutes=m;live=false;occurrence=0;render();}
