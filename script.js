@@ -8,8 +8,8 @@ let lang=new URLSearchParams(location.search).get('lang')==='fr'?'fr':'en', h24=
 let date,minutes,viewYear,viewMonth,instant;
 let theme=matchMedia('(prefers-color-scheme: light)').matches?'day':'night';
 try { theme=localStorage.getItem('timezones-theme')||theme; } catch {}
-const flagCodes=['bc','yt','ab','nt','sk','mb','on','qc','nu','nb','pe','ns','nl'];
-const flagFor=city=>flagCodes[cities.indexOf(city)];
+const cityFlags={'Victoria':'bc','Whitehorse':'yt','Edmonton':'ab','Yellowknife':'nt','Regina':'sk','Winnipeg':'mb','Ottawa':'on','Québec':'qc','Iqaluit':'nu','Fredericton':'nb','Charlottetown':'pe','Halifax':'ns',"St. John's":'nl'};
+const flagFor=city=>cityFlags[city.name];
 function updateTheme(){
  document.documentElement.dataset.theme=theme;
  $('theme').textContent=lang==='en'?(theme==='day'?'☾ Night mode':'☀ Day mode'):(theme==='day'?'☾ Mode nuit':'☀ Mode jour');
