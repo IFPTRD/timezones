@@ -1,4 +1,4 @@
-// Canadian capitals and their time zone information
+// Canadian capitals and major cities
 const locations = [
   { city: 'Ottawa', province: 'Ontario', timezone: 'America/Toronto', observesDST: true },
   { city: 'St. John\'s', province: 'Newfoundland and Labrador', timezone: 'America/St_Johns', observesDST: true },
@@ -18,22 +18,25 @@ const locations = [
   { city: 'Iqaluit', province: 'Nunavut', timezone: 'America/Iqaluit', observesDST: true },
 ];
 
-// Translation strings
 const translations = {
   en: {
     title: 'Canadian Time Zones',
-    langSwitch: 'Français',
-    checkDate: 'Check time for:',
+    subtitle: 'Understanding time across Canada',
+    langSwitch: 'FR',
+    viewingFrom: 'Viewing from Ottawa',
     now: 'Now',
-    dstNotice: 'Daylight Saving Time Changes in 2027',
-    dstStart: 'Starts:',
-    dstStartDate: 'March 14, 2:00 AM (clocks forward)',
-    dstEnd: 'Ends:',
-    dstEndDate: 'November 7, 2:00 AM (clocks back)',
-    noChanges: 'No clock changes: BC, Manitoba, Yukon, Saskatchewan (permanent daylight time)',
-    recentChanges: '2026 changes: BC and Manitoba moved to permanent daylight time',
-    observesDST: 'DST',
-    noDST: 'No DST',
+    timelineHeader: 'At the same moment across Canada:',
+    dstTitle: 'Daylight Saving 2027',
+    dstDates: 'Mar 14 – Nov 7',
+    dstWho: 'ON, QC, NS, NB, PE, NL, NU, NT, AB',
+    permanentTitle: 'Permanent Time',
+    permanentWho: 'BC, MB, YT, SK',
+    permanentNote: 'No clock changes',
+    sameTime: 'Same time',
+    ahead: 'ahead',
+    behind: 'behind',
+    dst: 'DST',
+    noDst: 'No DST',
     provinces: {
       'Ontario': 'Ontario',
       'Newfoundland and Labrador': 'Newfoundland and Labrador',
@@ -52,18 +55,22 @@ const translations = {
   },
   fr: {
     title: 'Fuseaux horaires canadiens',
-    langSwitch: 'English',
-    checkDate: 'Vérifier l\'heure pour :',
+    subtitle: 'Comprendre l\'heure au Canada',
+    langSwitch: 'EN',
+    viewingFrom: 'Vue depuis Ottawa',
     now: 'Maintenant',
-    dstNotice: 'Changements d\'heure avancée en 2027',
-    dstStart: 'Début :',
-    dstStartDate: '14 mars, 2 h (avancer l\'heure)',
-    dstEnd: 'Fin :',
-    dstEndDate: '7 novembre, 2 h (reculer l\'heure)',
-    noChanges: 'Pas de changement d\'heure : C.-B., Manitoba, Yukon, Saskatchewan (heure avancée permanente)',
-    recentChanges: 'Changements de 2026 : C.-B. et Manitoba sont passés à l\'heure avancée permanente',
-    observesDST: 'HA',
-    noDST: 'Pas d\'HA',
+    timelineHeader: 'Au même moment à travers le Canada :',
+    dstTitle: 'Heure avancée 2027',
+    dstDates: '14 mars – 7 nov',
+    dstWho: 'ON, QC, NS, NB, PE, NL, NU, NT, AB',
+    permanentTitle: 'Heure permanente',
+    permanentWho: 'C.-B., MB, YT, SK',
+    permanentNote: 'Pas de changement',
+    sameTime: 'Même heure',
+    ahead: 'en avance',
+    behind: 'en retard',
+    dst: 'HA',
+    noDst: 'Pas d\'HA',
     provinces: {
       'Ontario': 'Ontario',
       'Newfoundland and Labrador': 'Terre-Neuve-et-Labrador',
@@ -85,235 +92,177 @@ const translations = {
 let currentLang = 'en';
 let selectedDate = new Date();
 
-// Initialize the app
 function init() {
   const dateInput = document.getElementById('dateInput');
-  const hourInput = document.getElementById('hourInput');
-  const minuteInput = document.getElementById('minuteInput');
-  const ampmInput = document.getElementById('ampmInput');
+  const timeInput = document.getElementById('timeInput');
   const nowBtn = document.getElementById('nowBtn');
   const langToggle = document.getElementById('langToggle');
   
-  // Set initial date input values
-  setDateInputValue(selectedDate);
+  updateInputs();
   
-  // Event listeners
-  dateInput.addEventListener('change', updateFromInputs);
-  hourInput.addEventListener('input', updateFromInputs);
-  minuteInput.addEventListener('input', updateFromInputs);
-  ampmInput.addEventListener('change', updateFromInputs);
+  dateInput.addEventListener('change', handleDateTimeChange);
+  timeInput.addEventListener('change', handleDateTimeChange);
   
   nowBtn.addEventListener('click', () => {
     selectedDate = new Date();
-    setDateInputValue(selectedDate);
-    updateTimes();
-    updateComparison();
+    updateInputs();
+    updateDisplay();
   });
   
   langToggle.addEventListener('click', toggleLanguage);
   
-  // Initial render
-  updateTimes();
-  updateComparison();
+  updateDisplay();
   updateLanguage();
 }
 
-function updateFromInputs() {
+function handleDateTimeChange() {
   const dateInput = document.getElementById('dateInput');
-  const hourInput = document.getElementById('hourInput');
-  const minuteInput = document.getElementById('minuteInput');
-  const ampmInput = document.getElementById('ampmInput');
+  const timeInput = document.getElementById('timeInput');
   
   const dateVal = dateInput.value;
-  const hourVal = parseInt(hourInput.value) || 12;
-  const minuteVal = parseInt(minuteInput.value) || 0;
-  const ampm = ampmInput.value;
+  const timeVal = timeInput.value;
   
-  if (dateVal) {
-    let hour24 = hourVal;
-    if (ampm === 'PM' && hourVal !== 12) hour24 += 12;
-    if (ampm === 'AM' && hourVal === 12) hour24 = 0;
-    
+  if (dateVal && timeVal) {
     const [year, month, day] = dateVal.split('-');
-    selectedDate = new Date(year, month - 1, day, hour24, minuteVal);
-    updateTimes();
-    updateComparison();
+    const [hours, minutes] = timeVal.split(':');
+    selectedDate = new Date(year, month - 1, day, hours, minutes);
+    updateDisplay();
   }
 }
 
-function setDateInputValue(date) {
+function updateInputs() {
   const dateInput = document.getElementById('dateInput');
-  const hourInput = document.getElementById('hourInput');
-  const minuteInput = document.getElementById('minuteInput');
-  const ampmInput = document.getElementById('ampmInput');
+  const timeInput = document.getElementById('timeInput');
   
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const year = selectedDate.getFullYear();
+  const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+  const day = String(selectedDate.getDate()).padStart(2, '0');
   dateInput.value = `${year}-${month}-${day}`;
   
-  let hours = date.getHours();
-  const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12 || 12;
-  
-  hourInput.value = hours;
-  minuteInput.value = String(minutes).padStart(2, '0');
-  ampmInput.value = ampm;
+  const hours = String(selectedDate.getHours()).padStart(2, '0');
+  const minutes = String(selectedDate.getMinutes()).padStart(2, '0');
+  timeInput.value = `${hours}:${minutes}`;
 }
 
 function toggleLanguage() {
   currentLang = currentLang === 'en' ? 'fr' : 'en';
   document.documentElement.lang = currentLang;
   updateLanguage();
-  updateTimes(); // Re-render with new language
+  updateDisplay();
 }
 
 function updateLanguage() {
   const elements = document.querySelectorAll('[data-i18n]');
   elements.forEach(el => {
     const key = el.getAttribute('data-i18n');
-    const keys = key.split('.');
-    let value = translations[currentLang];
-    
-    keys.forEach(k => {
-      value = value[k];
-    });
-    
+    const value = translations[currentLang][key];
     if (value) {
       el.textContent = value;
     }
   });
 }
 
-function updateTimes() {
-  const grid = document.getElementById('timeGrid');
-  grid.innerHTML = '';
-  
-  locations.forEach(location => {
-    const card = createTimeCard(location);
-    grid.appendChild(card);
-  });
+function updateDisplay() {
+  updateOttawaTime();
+  updateTimeline();
 }
 
-function updateComparison() {
-  const comparisonDiv = document.getElementById('timeComparison');
+function updateOttawaTime() {
+  const timeDisplay = document.getElementById('ottawaTime');
+  const dateDisplay = document.getElementById('ottawaDate');
   
-  // Get unique time zones
-  const timeZones = {};
-  locations.forEach(loc => {
-    if (!timeZones[loc.timezone]) {
-      timeZones[loc.timezone] = [];
-    }
-    timeZones[loc.timezone].push(loc.city);
+  const ottawaTime = selectedDate.toLocaleString(currentLang === 'en' ? 'en-CA' : 'fr-CA', {
+    timeZone: 'America/Toronto',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
   });
   
-  // Calculate time differences from Ottawa
+  const ottawaDate = selectedDate.toLocaleString(currentLang === 'en' ? 'en-CA' : 'fr-CA', {
+    timeZone: 'America/Toronto',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  
+  timeDisplay.textContent = ottawaTime;
+  dateDisplay.textContent = ottawaDate;
+}
+
+function updateTimeline() {
+  const timeline = document.getElementById('timeline');
   const ottawaTimezone = 'America/Toronto';
-  const ottawaDate = new Date(selectedDate.toLocaleString('en-US', { timeZone: ottawaTimezone }));
   
-  const differences = [];
-  Object.keys(timeZones).forEach(tz => {
-    if (tz !== ottawaTimezone) {
-      const tzDate = new Date(selectedDate.toLocaleString('en-US', { timeZone: tz }));
-      const diffMinutes = (ottawaDate - tzDate) / 1000 / 60;
-      const diffHours = diffMinutes / 60;
+  const ottawaDate = new Date(selectedDate.toLocaleString('en-US', { timeZone: ottawaTimezone }));
+  const ottawaMinutes = ottawaDate.getHours() * 60 + ottawaDate.getMinutes();
+  
+  const timeZoneData = {};
+  locations.forEach(loc => {
+    if (!timeZoneData[loc.timezone]) {
+      const locDate = new Date(selectedDate.toLocaleString('en-US', { timeZone: loc.timezone }));
+      const locMinutes = locDate.getHours() * 60 + locDate.getMinutes();
+      const diffMinutes = ottawaMinutes - locMinutes;
       
-      const cities = timeZones[tz].join(', ');
-      differences.push({
-        cities,
-        diffHours,
-        ahead: diffHours > 0
-      });
+      timeZoneData[loc.timezone] = {
+        date: locDate,
+        diffMinutes: diffMinutes,
+        locations: [],
+        observesDST: loc.observesDST
+      };
     }
+    timeZoneData[loc.timezone].locations.push(loc);
   });
   
-  // Sort by time difference
-  differences.sort((a, b) => b.diffHours - a.diffHours);
+  const sortedZones = Object.entries(timeZoneData).sort((a, b) => b[1].diffMinutes - a[1].diffMinutes);
   
-  const labels = {
-    en: { ahead: 'ahead of', behind: 'behind', ottawa: 'Ottawa' },
-    fr: { ahead: 'en avance sur', behind: 'en retard sur', ottawa: 'Ottawa' }
-  };
-  const l = labels[currentLang];
+  const t = translations[currentLang];
   
-  comparisonDiv.innerHTML = differences.map(diff => {
-    const absDiff = Math.abs(diff.diffHours);
-    const hours = Math.floor(absDiff);
-    const minutes = Math.round((absDiff - hours) * 60);
+  timeline.innerHTML = sortedZones.map(([tz, data]) => {
+    const isOttawa = tz === ottawaTimezone;
+    const cities = data.locations.map(l => l.city).join(', ');
+    const provinces = data.locations.map(l => t.provinces[l.province]).join(', ');
     
-    let timeStr = '';
-    if (hours > 0) timeStr += `${hours}h`;
-    if (minutes > 0) timeStr += ` ${minutes}min`;
+    const timeStr = data.date.toLocaleString(currentLang === 'en' ? 'en-CA' : 'fr-CA', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
     
-    const direction = diff.ahead ? l.behind : l.ahead;
+    let diffText = '';
+    if (data.diffMinutes === 0) {
+      diffText = t.sameTime;
+    } else {
+      const absDiff = Math.abs(data.diffMinutes);
+      const hours = Math.floor(absDiff / 60);
+      const minutes = absDiff % 60;
+      
+      let parts = [];
+      if (hours > 0) parts.push(`${hours}h`);
+      if (minutes > 0) parts.push(`${minutes}m`);
+      
+      const direction = data.diffMinutes > 0 ? t.behind : t.ahead;
+      diffText = `${parts.join(' ')} ${direction}`;
+    }
+    
+    const dstText = data.observesDST ? t.dst : t.noDst;
     
     return `
-      <div class="comparison-item">
-        <span class="comparison-cities">${diff.cities}</span>
-        <span class="comparison-diff">${timeStr} ${direction} ${l.ottawa}</span>
+      <div class="timeline-row ${isOttawa ? 'highlight' : ''}">
+        <div class="row-location">
+          <div class="row-city">${cities}</div>
+          <div class="row-province">${provinces}</div>
+        </div>
+        <div class="row-time">${timeStr}</div>
+        <div class="row-diff">
+          <div class="diff-time">${diffText}</div>
+          <div class="diff-dst">${dstText}</div>
+        </div>
       </div>
     `;
   }).join('');
 }
 
-function createTimeCard(location) {
-  const card = document.createElement('div');
-  card.className = 'time-card';
-  
-  // Get time in the location's timezone
-  const timeStr = selectedDate.toLocaleString(currentLang === 'en' ? 'en-CA' : 'fr-CA', {
-    timeZone: location.timezone,
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  });
-  
-  // Get timezone abbreviation
-  const formatter = new Intl.DateTimeFormat(currentLang === 'en' ? 'en-CA' : 'fr-CA', {
-    timeZone: location.timezone,
-    timeZoneName: 'short'
-  });
-  
-  const parts = formatter.formatToParts(selectedDate);
-  const timeZoneName = parts.find(part => part.type === 'timeZoneName')?.value || '';
-  
-  // Calculate UTC offset
-  const localDate = new Date(selectedDate.toLocaleString('en-US', { timeZone: location.timezone }));
-  const offsetMinutes = -localDate.getTimezoneOffset();
-  const offsetHours = Math.floor(Math.abs(offsetMinutes) / 60);
-  const offsetMins = Math.abs(offsetMinutes) % 60;
-  const offsetSign = offsetMinutes >= 0 ? '+' : '-';
-  const offsetStr = `UTC${offsetSign}${offsetHours}${offsetMins > 0 ? ':' + String(offsetMins).padStart(2, '0') : ''}`;
-  
-  // Highlight Ottawa
-  if (location.city === 'Ottawa') {
-    card.classList.add('highlight');
-  }
-  
-  const provinceName = translations[currentLang].provinces[location.province];
-  const dstLabel = location.observesDST ? translations[currentLang].observesDST : translations[currentLang].noDST;
-  const badgeClass = location.observesDST ? 'dst-badge' : 'dst-badge no-change';
-  
-  card.innerHTML = `
-    <div class="card-header">
-      <div>
-        <div class="city-name">${location.city}</div>
-        <div class="province">${provinceName}</div>
-      </div>
-      <div class="${badgeClass}">${dstLabel}</div>
-    </div>
-    <div class="time-display">${timeStr}</div>
-    <div class="timezone-info">
-      ${timeZoneName}
-      <span class="offset">${offsetStr}</span>
-    </div>
-  `;
-  
-  return card;
-}
-
-// Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {

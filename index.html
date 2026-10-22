@@ -9,57 +9,48 @@
 <body>
   <main class="container">
     <header class="header">
-      <h1 class="title" data-i18n="title">Canadian Time Zones</h1>
+      <div class="header-content">
+        <h1 class="title" data-i18n="title">Canadian Time Zones</h1>
+        <p class="subtitle" data-i18n="subtitle">Understanding time across Canada</p>
+      </div>
       <button class="lang-toggle" id="langToggle" aria-label="Toggle language">
-        <span data-i18n="langSwitch">Français</span>
+        <span data-i18n="langSwitch">FR</span>
       </button>
     </header>
 
-    <section class="date-selector">
-      <div class="selector-group">
-        <label data-i18n="checkDate">Check time for:</label>
-        <button class="btn-now" id="nowBtn" data-i18n="now">Now</button>
+    <section class="time-selector">
+      <div class="current-time">
+        <div class="location-label" data-i18n="viewingFrom">Viewing from Ottawa</div>
+        <div class="time-display" id="ottawaTime">2:30 PM</div>
+        <div class="date-display" id="ottawaDate">Thursday, October 22, 2026</div>
       </div>
-      <div class="date-time-inputs">
-        <input type="date" id="dateInput" class="date-input">
-        <div class="time-input-group">
-          <input type="number" id="hourInput" class="time-input" min="1" max="12" placeholder="12">
-          <span class="time-separator">:</span>
-          <input type="number" id="minuteInput" class="time-input" min="0" max="59" placeholder="00">
-          <select id="ampmInput" class="ampm-input">
-            <option value="AM">AM</option>
-            <option value="PM">PM</option>
-          </select>
-        </div>
+      <div class="time-controls">
+        <button class="control-btn" id="nowBtn" data-i18n="now">Now</button>
+        <input type="date" id="dateInput" class="control-input">
+        <input type="time" id="timeInput" class="control-input">
       </div>
     </section>
 
-    <div class="time-comparison" id="timeComparison">
-      <!-- Time difference summary will be inserted here -->
-    </div>
-
-    <div class="grid" id="timeGrid">
-      <!-- Time cards will be inserted here -->
-    </div>
+    <section class="timeline-section">
+      <div class="timeline-header" data-i18n="timelineHeader">At the same moment across Canada:</div>
+      <div class="timeline" id="timeline">
+        <!-- Timeline will be generated here -->
+      </div>
+    </section>
 
     <footer class="info-panel">
-      <h2 data-i18n="dstNotice">Daylight Saving Time Changes in 2027</h2>
-      <div class="info-content">
-        <div class="info-item">
-          <strong data-i18n="dstStart">Starts:</strong>
-          <span data-i18n="dstStartDate">March 14, 2:00 AM (clocks forward)</span>
+      <div class="info-grid">
+        <div class="info-block">
+          <h3 data-i18n="dstTitle">Daylight Saving 2027</h3>
+          <p data-i18n="dstDates">Mar 14 – Nov 7</p>
+          <p class="info-detail" data-i18n="dstWho">ON, QC, NS, NB, PE, NL, NU, NT, AB</p>
         </div>
-        <div class="info-item">
-          <strong data-i18n="dstEnd">Ends:</strong>
-          <span data-i18n="dstEndDate">November 7, 2:00 AM (clocks back)</span>
+        <div class="info-block">
+          <h3 data-i18n="permanentTitle">Permanent Time</h3>
+          <p data-i18n="permanentWho">BC, MB, YT, SK</p>
+          <p class="info-detail" data-i18n="permanentNote">No clock changes</p>
         </div>
       </div>
-      <p class="info-note" data-i18n="noChanges">
-        <strong>No clock changes:</strong> BC, Manitoba, Yukon, Saskatchewan (permanent daylight time)
-      </p>
-      <p class="info-note info-recent" data-i18n="recentChanges">
-        2026 changes: BC and Manitoba moved to permanent daylight time
-      </p>
     </footer>
   </main>
 
