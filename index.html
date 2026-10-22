@@ -16,10 +16,27 @@
     </header>
 
     <section class="date-selector">
-      <label for="dateInput" data-i18n="checkDate">Check time for:</label>
-      <input type="datetime-local" id="dateInput" class="date-input">
-      <button class="btn-secondary" id="nowBtn" data-i18n="now">Now</button>
+      <div class="selector-group">
+        <label data-i18n="checkDate">Check time for:</label>
+        <button class="btn-now" id="nowBtn" data-i18n="now">Now</button>
+      </div>
+      <div class="date-time-inputs">
+        <input type="date" id="dateInput" class="date-input">
+        <div class="time-input-group">
+          <input type="number" id="hourInput" class="time-input" min="1" max="12" placeholder="12">
+          <span class="time-separator">:</span>
+          <input type="number" id="minuteInput" class="time-input" min="0" max="59" placeholder="00">
+          <select id="ampmInput" class="ampm-input">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </div>
+      </div>
     </section>
+
+    <div class="time-comparison" id="timeComparison">
+      <!-- Time difference summary will be inserted here -->
+    </div>
 
     <div class="grid" id="timeGrid">
       <!-- Time cards will be inserted here -->

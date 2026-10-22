@@ -1,7 +1,6 @@
 // Canadian capitals and their time zone information
 const locations = [
   { city: 'Ottawa', province: 'Ontario', timezone: 'America/Toronto', observesDST: true },
-  { city: 'Toronto', province: 'Ontario', timezone: 'America/Toronto', observesDST: true },
   { city: 'St. John\'s', province: 'Newfoundland and Labrador', timezone: 'America/St_Johns', observesDST: true },
   { city: 'Halifax', province: 'Nova Scotia', timezone: 'America/Halifax', observesDST: true },
   { city: 'Charlottetown', province: 'Prince Edward Island', timezone: 'America/Halifax', observesDST: true },
@@ -89,39 +88,78 @@ let selectedDate = new Date();
 // Initialize the app
 function init() {
   const dateInput = document.getElementById('dateInput');
+  const hourInput = document.getElementById('hourInput');
+  const minuteInput = document.getElementById('minuteInput');
+  const ampmInput = document.getElementById('ampmInput');
   const nowBtn = document.getElementById('nowBtn');
   const langToggle = document.getElementById('langToggle');
   
-  // Set initial date input value
+  // Set initial date input values
   setDateInputValue(selectedDate);
   
   // Event listeners
-  dateInput.addEventListener('change', (e) => {
-    selectedDate = new Date(e.target.value);
-    updateTimes();
-  });
+  dateInput.addEventListener('change', updateFromInputs);
+  hourInput.addEventListener('input', updateFromInputs);
+  minuteInput.addEventListener('input', updateFromInputs);
+  ampmInput.addEventListener('change', updateFromInputs);
   
   nowBtn.addEventListener('click', () => {
     selectedDate = new Date();
     setDateInputValue(selectedDate);
     updateTimes();
+    updateComparison();
   });
   
   langToggle.addEventListener('click', toggleLanguage);
   
   // Initial render
   updateTimes();
+  updateComparison();
   updateLanguage();
+}
+
+function updateFromInputs() {
+  const dateInput = document.getElementById('dateInput');
+  const hourInput = document.getElementById('hourInput');
+  const minuteInput = document.getElementById('minuteInput');
+  const ampmInput = document.getElementById('ampmInput');
+  
+  const dateVal = dateInput.value;
+  const hourVal = parseInt(hourInput.value) || 12;
+  const minuteVal = parseInt(minuteInput.value) || 0;
+  const ampm = ampmInput.value;
+  
+  if (dateVal) {
+    let hour24 = hourVal;
+    if (ampm === 'PM' && hourVal !== 12) hour24 += 12;
+    if (ampm === 'AM' && hourVal === 12) hour24 = 0;
+    
+    const [year, month, day] = dateVal.split('-');
+    selectedDate = new Date(year, month - 1, day, hour24, minuteVal);
+    updateTimes();
+    updateComparison();
+  }
 }
 
 function setDateInputValue(date) {
   const dateInput = document.getElementById('dateInput');
+  const hourInput = document.getElementById('hourInput');
+  const minuteInput = document.getElementById('minuteInput');
+  const ampmInput = document.getElementById('ampmInput');
+  
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  dateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+  dateInput.value = `${year}-${month}-${day}`;
+  
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+  
+  hourInput.value = hours;
+  minuteInput.value = String(minutes).padStart(2, '0');
+  ampmInput.value = ampm;
 }
 
 function toggleLanguage() {
@@ -156,6 +194,67 @@ function updateTimes() {
     const card = createTimeCard(location);
     grid.appendChild(card);
   });
+}
+
+function updateComparison() {
+  const comparisonDiv = document.getElementById('timeComparison');
+  
+  // Get unique time zones
+  const timeZones = {};
+  locations.forEach(loc => {
+    if (!timeZones[loc.timezone]) {
+      timeZones[loc.timezone] = [];
+    }
+    timeZones[loc.timezone].push(loc.city);
+  });
+  
+  // Calculate time differences from Ottawa
+  const ottawaTimezone = 'America/Toronto';
+  const ottawaDate = new Date(selectedDate.toLocaleString('en-US', { timeZone: ottawaTimezone }));
+  
+  const differences = [];
+  Object.keys(timeZones).forEach(tz => {
+    if (tz !== ottawaTimezone) {
+      const tzDate = new Date(selectedDate.toLocaleString('en-US', { timeZone: tz }));
+      const diffMinutes = (ottawaDate - tzDate) / 1000 / 60;
+      const diffHours = diffMinutes / 60;
+      
+      const cities = timeZones[tz].join(', ');
+      differences.push({
+        cities,
+        diffHours,
+        ahead: diffHours > 0
+      });
+    }
+  });
+  
+  // Sort by time difference
+  differences.sort((a, b) => b.diffHours - a.diffHours);
+  
+  const labels = {
+    en: { ahead: 'ahead of', behind: 'behind', ottawa: 'Ottawa' },
+    fr: { ahead: 'en avance sur', behind: 'en retard sur', ottawa: 'Ottawa' }
+  };
+  const l = labels[currentLang];
+  
+  comparisonDiv.innerHTML = differences.map(diff => {
+    const absDiff = Math.abs(diff.diffHours);
+    const hours = Math.floor(absDiff);
+    const minutes = Math.round((absDiff - hours) * 60);
+    
+    let timeStr = '';
+    if (hours > 0) timeStr += `${hours}h`;
+    if (minutes > 0) timeStr += ` ${minutes}min`;
+    
+    const direction = diff.ahead ? l.behind : l.ahead;
+    
+    return `
+      <div class="comparison-item">
+        <span class="comparison-cities">${diff.cities}</span>
+        <span class="comparison-diff">${timeStr} ${direction} ${l.ottawa}</span>
+      </div>
+    `;
+  }).join('');
 }
 
 function createTimeCard(location) {
