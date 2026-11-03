@@ -1,4 +1,4 @@
-// Explicit capital-city rules for the supported planning window, 2026–2027.
+// Explicit capital-city rules from 2026 onward.
 // See SOURCES.md. Offsets are minutes east of UTC; no device timezone dependency.
 (function (root) {
   const cities = [
@@ -8,7 +8,7 @@
     ['Yellowknife','Territoires du Nord-Ouest','Northwest Territories',-420,'permanent',-360],
     ['Regina','Saskatchewan','Saskatchewan',-360,'fixed',-360],
     ['Winnipeg','Manitoba','Manitoba',-360,'permanent',-300],
-    ['Ottawa','Ontario · référence','Ontario · reference',-300,'seasonal'],
+    ['Toronto','Ontario','Ontario',-300,'seasonal'],
     ['Québec','Québec','Quebec',-300,'seasonal'],
     ['Iqaluit','Nunavut','Nunavut',-300,'seasonal'],
     ['Fredericton','Nouveau-Brunswick','New Brunswick',-240,'seasonal'],
@@ -16,7 +16,7 @@
     ['Halifax','Nouvelle-Écosse','Nova Scotia',-240,'seasonal'],
     ["St. John's",'Terre-Neuve-et-Labrador','Newfoundland and Labrador',-210,'seasonal']
   ].map(([name,fr,en,standard,policy,fixed])=>({name,fr,en,standard,policy,fixed}));
-  const ottawa = cities.find(c=>c.name==='Ottawa');
+  const ottawa = {name:'Ottawa',fr:'Ontario · référence',en:'Ontario · reference',standard:-300,policy:'seasonal'};
   function sunday(year,month,n) { return 1+(7-new Date(Date.UTC(year,month,1)).getUTCDay())%7+(n-1)*7; }
   function offset(city,instant) {
     const year=new Date(instant).getUTCFullYear();

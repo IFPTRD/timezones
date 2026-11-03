@@ -1,6 +1,6 @@
 # Sources and calculation notes / Sources et méthode
 
-Verified / Vérifié : 2026-10-22. Supported dates / Dates prises en charge : 2026–2027.
+Verified / Vérifié : 2026-10-22. Supported dates / Dates prises en charge : 2026+ (2026 and future years).
 
 ## Government sources / Sources gouvernementales
 
@@ -23,9 +23,9 @@ All entered times refer to Ottawa. A nonexistent spring-forward time is rejected
 
 La saisie correspond toujours à l’heure d’Ottawa. Une heure inexistante au printemps est refusée; une heure répétée à l’automne propose les deux occurrences. Le calcul utilise l’instant complet pour conserver la bonne date locale.
 
-The before/after table describes the offsets after Ottawa's fallback (from 02:00 on November 1). The interactive results are exact for the selected instant, including transition hours. Rules are limited to capital cities, not whole jurisdictions. Ottawa substitutes for Toronto at the user's request.
+The before/after table describes the offsets after Ottawa's fallback (from 02:00 on November 1). The interactive results are exact for the selected instant, including transition hours. Rules are limited to capital cities, not whole jurisdictions. Ottawa is the reference anchor for the tool, while Toronto appears as Ontario's capital in the provincial/territorial columns.
 
-Les règles concernent les capitales seulement. Ottawa remplace Toronto à la demande de l’utilisateur. Les dates futures demeurent sujettes aux changements législatifs.
+Les règles concernent les capitales seulement. Ottawa demeure l’heure de référence de l’outil, tandis que Toronto figure comme capitale de l’Ontario dans le tableau. Les dates futures demeurent sujettes aux changements législatifs.
 
 Office-hour indicators use 08:30–16:30 weekdays, not holiday calendars. They are illustrative, not availability information.
 

@@ -7,14 +7,15 @@ Bilingual Ottawa-centred meeting planner, inspired by the operator-provided Goog
 ## Features
 
 - Capital cities grouped by actual offset from Ottawa, west to east.
-- Inline month calendar, time slider, exact 24-hour inputs and meeting presets.
+- Optional interactive SVG map of Canada shading provinces and territories by time difference relative to Ottawa, with capital-city markers and local times.
+- Inline month calendar, time slider, exact 24-hour inputs and meeting presets (supports 2026 and all future years).
 - Before/after November 1, 2026 comparison with a persistent change table.
 - Canadian English/French; 12/24-hour output; previous/next-day labels.
 - Copy meeting times; illustrative weekday office-hour indicators.
-- Explicit, source-documented 2026/2027 rules independent of browser timezone data.
+- Explicit, source-documented rules independent of browser timezone data.
 - Spring gap rejection and explicit autumn repeated-hour selection.
 
-Ottawa represents Ontario; Toronto and duplicate major cities are omitted. Capital-city rules do not describe every community in a province/territory.
+Ottawa is the reference anchor for the tool; Toronto is listed as Ontario's capital in the provincial/territorial columns. Capital-city rules do not describe every community in a province/territory.
 
 ## Run and test
 
