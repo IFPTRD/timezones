@@ -27,10 +27,14 @@ for(const tz of ['America/Toronto','Asia/Tokyo']){
  await page.locator('#mapToggle').click();
  assert.equal(await page.locator('#mapPanel').isVisible(),true);
  assert.equal(await page.locator('#canadaMap .prov').count(),13);
+ assert.equal(await page.locator('#canadaMap .subprov').count(),8);
  assert.equal(await page.locator('#canadaMap .prov[data-prov="mb"]').getAttribute('data-diff'),'0');
+ assert.equal(await page.locator('#canadaMap .subprov[data-zone="on_nw"]').getAttribute('data-diff'),'-60');
+ assert.equal(await page.locator('#canadaMap .subprov[data-zone="on_nodst"]').getAttribute('data-diff'),'0');
  await page.locator('#before').click();assert.equal(await page.locator('.group').count(),6);
  assert.match(await winnipeg.innerText(),/1 h behind Ottawa/);
  assert.equal(await page.locator('#canadaMap .prov[data-prov="mb"]').getAttribute('data-diff'),'-60');
+ assert.equal(await page.locator('#canadaMap .subprov[data-zone="on_nodst"]').getAttribute('data-diff'),'-60');
  await page.locator('#mapToggle').click();
  assert.equal(await page.locator('#mapPanel').isVisible(),false);
  await page.locator('#after').click();
