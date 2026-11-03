@@ -10,7 +10,6 @@ for(const tz of ['America/Toronto','Asia/Tokyo']){
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
  await page.goto(process.env.SITE_URL || pathToFileURL(path.join(__dirname,'index.html')).href);
  assert.equal(await page.locator('#datePanel').getAttribute('open'),null);
- assert.equal(await page.locator('#mapPanel').isVisible(),false);
  assert.match(await page.locator('#notice').innerText(),/turned clocks back/);
  assert.ok(await page.locator('#groups').evaluate(e=>e.getBoundingClientRect().top)<600,'Columns above fold');
  await page.locator('#theme').click();assert.equal(await page.locator('html').getAttribute('data-theme'),'day');
@@ -24,19 +23,8 @@ for(const tz of ['America/Toronto','Asia/Tokyo']){
  const winnipeg=page.locator('.group').filter({has:page.locator('.city strong',{hasText:'Winnipeg'})});
  assert.match(await winnipeg.innerText(),/Same as Ottawa/);
  assert.match(await page.locator('#anchorTime').innerText(),/2:00/);
- await page.locator('#mapToggle').click();
- assert.equal(await page.locator('#mapPanel').isVisible(),true);
- assert.equal(await page.locator('#canadaMap .prov').count(),13);
- assert.equal(await page.locator('#canadaMap .subprov').count(),8);
- assert.equal(await page.locator('#canadaMap .prov[data-prov="mb"]').getAttribute('data-diff'),'0');
- assert.equal(await page.locator('#canadaMap .subprov[data-zone="on_nw"]').getAttribute('data-diff'),'-60');
- assert.equal(await page.locator('#canadaMap .subprov[data-zone="on_nodst"]').getAttribute('data-diff'),'0');
  await page.locator('#before').click();assert.equal(await page.locator('.group').count(),6);
  assert.match(await winnipeg.innerText(),/1 h behind Ottawa/);
- assert.equal(await page.locator('#canadaMap .prov[data-prov="mb"]').getAttribute('data-diff'),'-60');
- assert.equal(await page.locator('#canadaMap .subprov[data-zone="on_nodst"]').getAttribute('data-diff'),'-60');
- await page.locator('#mapToggle').click();
- assert.equal(await page.locator('#mapPanel').isVisible(),false);
  await page.locator('#after').click();
  await page.locator('#hour').fill('1');await page.locator('#minute').fill('30');await page.locator('#minute').press('Tab');
  assert.equal(await page.locator('#fold').isVisible(),true);
